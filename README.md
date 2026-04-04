@@ -1,1 +1,1060 @@
-# GitHub.io
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shrinex Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@300;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --white: #ffffff;
+    --silver: #c8c8c8;
+    --dim: #5a5a5a;
+    --edge: rgba(255,255,255,0.08);
+    --edge-bright: rgba(255,255,255,0.18);
+    --accent: #e8e8e8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #000;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* CURSOR */
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: white;
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.032;
+    pointer-events: none;
+    z-index: 9997;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--edge);
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.25em;
+    color: white;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: white; }
+
+  .nav-right {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 120px 48px 80px;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--edge) 1px, transparent 1px),
+      linear-gradient(90deg, var(--edge) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  }
+
+  .hero-scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: scan 8s linear infinite;
+  }
+  @keyframes scan {
+    0% { top: 0%; opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .hero-content {
+    position: relative;
+    text-align: center;
+    max-width: 900px;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+
+  .hero-title-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 4vw, 52px);
+    letter-spacing: 0.22em;
+    color: var(--dim);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3), transparent);
+    margin: 0 auto 40px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+  }
+
+  .hero-statement {
+    font-size: clamp(14px, 1.8vw, 18px);
+    line-height: 1.8;
+    color: var(--silver);
+    max-width: 640px;
+    margin: 0 auto 64px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+
+  .hero-statement em {
+    color: white;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .hero-coords {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    right: 48px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--dim);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TICKER */
+  .ticker-bar {
+    border-top: 1px solid var(--edge);
+    border-bottom: 1px solid var(--edge);
+    overflow: hidden;
+    padding: 12px 0;
+    background: rgba(255,255,255,0.015);
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 0;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-inner span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+    padding: 0 40px;
+  }
+  .ticker-inner span.bright { color: rgba(255,255,255,0.4); }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--edge-bright);
+    max-width: 120px;
+  }
+
+  /* THESIS */
+  .thesis-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .thesis-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 32px;
+  }
+
+  .thesis-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--silver);
+    font-weight: 300;
+  }
+
+  .thesis-body p { margin-bottom: 20px; }
+  .thesis-body strong { color: white; font-weight: 400; }
+
+  .thesis-right { padding-top: 8px; }
+
+  .stat-stack { display: flex; flex-direction: column; gap: 1px; }
+
+  .stat-item {
+    border: 1px solid var(--edge);
+    padding: 24px 28px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    transition: border-color 0.3s, background 0.3s;
+    cursor: default;
+  }
+  .stat-item:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 0.02em;
+    color: white;
+    min-width: 100px;
+  }
+
+  .stat-desc {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* VERTICALS */
+  .verticals-full { max-width: 100%; padding: 120px 48px; background: rgba(255,255,255,0.012); border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge); }
+
+  .verticals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--edge);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .vertical-cell {
+    background: #000;
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+    cursor: default;
+  }
+  .vertical-cell:hover { background: rgba(255,255,255,0.025); }
+  .vertical-cell:hover .v-index { color: white; }
+
+  .v-index {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    transition: color 0.3s;
+  }
+
+  .v-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .v-body {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--dim);
+    font-weight: 300;
+  }
+
+  .v-tag {
+    margin-top: 24px;
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 10px;
+  }
+
+  /* ARCHITECTURE */
+  .arch-section { max-width: 1200px; }
+
+  .arch-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 4vw, 60px);
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 60px;
+    max-width: 600px;
+    line-height: 1.05;
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr 2px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+
+  .arch-col { padding: 0 40px; }
+  .arch-col:first-child { padding-left: 0; }
+  .arch-col:last-child { padding-right: 0; }
+  .arch-sep { background: var(--edge-bright); width: 1px; }
+
+  .arch-layer {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .arch-col-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .arch-col-body {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--dim);
+  }
+
+  .arch-list {
+    list-style: none;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .arch-list li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .arch-list li::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+
+  /* TIMELINE */
+  .timeline-section { max-width: 1200px; }
+
+  .timeline-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 4vw, 60px);
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 64px;
+  }
+
+  .timeline-track {
+    position: relative;
+    padding-left: 1px;
+  }
+
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.05) 60%, transparent);
+  }
+
+  .t-item {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 40px;
+    padding: 32px 0 32px 40px;
+    position: relative;
+    border-bottom: 1px solid var(--edge);
+  }
+  .t-item:last-child { border-bottom: none; }
+
+  .t-item::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 40px;
+    width: 7px; height: 7px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: #000;
+    transform: rotate(45deg);
+  }
+
+  .t-era {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.12em;
+    padding-top: 4px;
+    line-height: 1.6;
+  }
+  .t-era strong {
+    display: block;
+    font-size: 15px;
+    color: white;
+    margin-bottom: 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.1em;
+  }
+
+  .t-content-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 10px;
+  }
+
+  .t-content-body {
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--dim);
+  }
+
+  /* MANIFESTO */
+  .manifesto-section {
+    max-width: 100%;
+    padding: 140px 48px;
+    text-align: center;
+    background: rgba(255,255,255,0.008);
+    border-top: 1px solid var(--edge);
+    border-bottom: 1px solid var(--edge);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .manifesto-section::before {
+    content: 'SHRINEX';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28vw;
+    color: rgba(255,255,255,0.015);
+    letter-spacing: 0.1em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .manifesto-inner { position: relative; z-index: 2; max-width: 780px; margin: 0 auto; }
+
+  .manifesto-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 48px;
+  }
+
+  .manifesto-body {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--silver);
+    font-weight: 300;
+  }
+
+  /* CONTACT */
+  .contact-section {
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .contact-left {}
+
+  .contact-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: white;
+    margin-bottom: 24px;
+  }
+
+  .contact-sub {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--dim);
+    max-width: 360px;
+  }
+
+  .contact-right { display: flex; flex-direction: column; gap: 1px; }
+
+  .contact-item {
+    border: 1px solid var(--edge);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .contact-item:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .ci-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .ci-value {
+    font-size: 13px;
+    color: white;
+    letter-spacing: 0.05em;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--edge);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.25em;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-right {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* UTILITIES */
+  .w-full { max-width: 100%; padding-left: 0; padding-right: 0; }
+
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .thesis-layout { grid-template-columns: 1fr; gap: 48px; }
+    .verticals-grid { grid-template-columns: 1fr; }
+    .arch-grid { grid-template-columns: 1fr; gap: 40px; }
+    .arch-sep { display: none; }
+    .arch-col { padding: 0; }
+    .t-item { grid-template-columns: 1fr; gap: 12px; }
+    .contact-section { grid-template-columns: 1fr; gap: 48px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .hero-coords, .hero-scroll { display: none; }
+    .verticals-full { padding: 80px 24px; }
+    .manifesto-section { padding: 100px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">SHRINEX GROUP</a>
+  <ul class="nav-links">
+    <li><a href="#thesis">Thesis</a></li>
+    <li><a href="#verticals">Domains</a></li>
+    <li><a href="#architecture">Structure</a></li>
+    <li><a href="#timeline">Horizon</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">EST. 2020s &nbsp;·&nbsp; INDIA</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">// Civilizational Infrastructure &nbsp;·&nbsp; Holding Group &nbsp;·&nbsp; Long Horizon</div>
+    <div class="hero-title">SHRINEX</div>
+    <div class="hero-title-sub">GROUP</div>
+    <div class="hero-divider"></div>
+    <div class="hero-statement">
+      We do not build companies.<br>
+      We engineer <em>systems that compound</em> — across decades, domains, and civilizational timescales —
+      until the architecture begins selecting its own outcomes.
+    </div>
+  </div>
+
+  <div class="hero-coords">
+    28.3949° N, 79.4512° E<br>
+    INITIATED &nbsp;·&nbsp; 2020s<br>
+    HORIZON &nbsp;·&nbsp; 700+ YRS
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    SCROLL TO DESCEND
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <span class="bright">ARTIFICIAL INTELLIGENCE</span><span>·</span>
+    <span>AUTONOMOUS ROBOTICS</span><span>·</span>
+    <span class="bright">COGNITIVE INFRASTRUCTURE</span><span>·</span>
+    <span>HEALTHCARE SYSTEMS</span><span>·</span>
+    <span class="bright">CLIMATE RESILIENCE</span><span>·</span>
+    <span>HUMAN CAPABILITY</span><span>·</span>
+    <span class="bright">VENTURE CAPITAL</span><span>·</span>
+    <span>PRIVATE EQUITY</span><span>·</span>
+    <span class="bright">SPACE SYSTEMS</span><span>·</span>
+    <span>BIOENGINEERING</span><span>·</span>
+    <span class="bright">ENERGY ARCHITECTURE</span><span>·</span>
+    <span>NEURAL INTERFACES</span><span>·</span>
+
+    <span class="bright">ARTIFICIAL INTELLIGENCE</span><span>·</span>
+    <span>AUTONOMOUS ROBOTICS</span><span>·</span>
+    <span class="bright">COGNITIVE INFRASTRUCTURE</span><span>·</span>
+    <span>HEALTHCARE SYSTEMS</span><span>·</span>
+    <span class="bright">CLIMATE RESILIENCE</span><span>·</span>
+    <span>HUMAN CAPABILITY</span><span>·</span>
+    <span class="bright">VENTURE CAPITAL</span><span>·</span>
+    <span>PRIVATE EQUITY</span><span>·</span>
+    <span class="bright">SPACE SYSTEMS</span><span>·</span>
+    <span>BIOENGINEERING</span><span>·</span>
+    <span class="bright">ENERGY ARCHITECTURE</span><span>·</span>
+    <span>NEURAL INTERFACES</span><span>·</span>
+  </div>
+</div>
+
+<!-- THESIS -->
+<section id="thesis" style="max-width:1200px;">
+  <div class="section-label">// 01 &nbsp; Operating Thesis</div>
+  <div class="thesis-layout">
+    <div class="thesis-left">
+      <div class="thesis-heading">THE MACHINE<br>DOES NOT<br>PAUSE.</div>
+      <div class="thesis-body">
+        <p>Most operators build for quarters. We build for centuries. The distinction is not philosophical — it is architectural. When your time horizon extends to 700 years, the choice set changes completely. Tactics become irrelevant. Only <strong>systems, compounding mechanisms, and civilizational leverage</strong> remain.</p>
+        <p>Shrinex Group is a holding platform engineered to deploy capital and cognitive infrastructure across a self-reinforcing network of subsidiaries. Every venture feeds the next. Every data point sharpens the thesis. Every year of compounding widens the moat beyond what capital alone can replicate.</p>
+        <p>We operate at the intersection of <strong>exponential technology and systemic human need</strong> — not because it is profitable in the short term, but because it is <strong>inescapable</strong> in the long one.</p>
+      </div>
+    </div>
+    <div class="thesis-right">
+      <div class="stat-stack">
+        <div class="stat-item">
+          <div class="stat-number">700+</div>
+          <div class="stat-desc">YEAR PLANNING<br>HORIZON<br>// CIVILIZATIONAL SCALE</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">∞</div>
+          <div class="stat-desc">COMPOUNDING<br>REINVESTMENT LOOP<br>// NO TERMINAL CONDITION</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">N+1</div>
+          <div class="stat-desc">VENTURE EXPANSION<br>MODEL<br>// EACH EXIT FUNDS THE NEXT</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">0</div>
+          <div class="stat-desc">TOLERANCE FOR<br>OPERATIONAL DRIFT<br>// SYSTEM SELF-CORRECTS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERTICALS -->
+<div class="verticals-full" id="verticals">
+  <div style="max-width:1200px; margin: 0 auto;">
+    <div class="section-label">// 02 &nbsp; Domains of Operation</div>
+  </div>
+  <div class="verticals-grid">
+    <div class="vertical-cell">
+      <div class="v-index">01 / ACTIVE</div>
+      <div class="v-title">Artificial Intelligence & Cognitive Automation</div>
+      <div class="v-body">Deploying post-operational intelligence layers across enterprise verticals. Replacing human cognitive bottlenecks with autonomous reasoning systems that learn, adapt, and compound in capability over time.</div>
+      <span class="v-tag">Core Infrastructure</span>
+    </div>
+    <div class="vertical-cell">
+      <div class="v-index">02 / ACTIVE</div>
+      <div class="v-title">Healthcare Systems Optimization</div>
+      <div class="v-body">Engineering AI-native operational infrastructure for clinics, hospitals, and healthcare networks. Reducing systemic inefficiency, extending clinical reach, and converting data into precision at scale.</div>
+      <span class="v-tag">Human Longevity Layer</span>
+    </div>
+    <div class="vertical-cell">
+      <div class="v-index">03 / BUILDING</div>
+      <div class="v-title">Autonomous Robotics & Physical AI</div>
+      <div class="v-body">Extending machine intelligence into physical reality. Building robotic systems capable of autonomous decision-making in dynamic environments — manufacturing, logistics, and human-adjacent operations.</div>
+      <span class="v-tag">Next Frontier</span>
+    </div>
+    <div class="vertical-cell">
+      <div class="v-index">04 / HORIZON</div>
+      <div class="v-title">Climate Resilience Infrastructure</div>
+      <div class="v-body">Designing the physical and computational infrastructure required for civilizations to persist across accelerating climate stress. Energy systems, resource networks, adaptive urban architecture.</div>
+      <span class="v-tag">Civilizational Necessity</span>
+    </div>
+    <div class="vertical-cell">
+      <div class="v-index">05 / HORIZON</div>
+      <div class="v-title">Human Capability Augmentation</div>
+      <div class="v-body">Neural interfaces, bioengineering, and cognitive enhancement systems. The next frontier of human performance is not behavioral — it is biological. We intend to be infrastructure for that transition.</div>
+      <span class="v-tag">Species-Level Impact</span>
+    </div>
+    <div class="vertical-cell">
+      <div class="v-index">06 / HORIZON</div>
+      <div class="v-title">Space Systems & Off-World Infrastructure</div>
+      <div class="v-body">A 700-year horizon demands off-planet optionality. Early positioning in launch logistics, orbital computation, and extra-terrestrial resource systems — before scarcity forces the market to move.</div>
+      <span class="v-tag">Terminal Frontier</span>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture" style="max-width:1200px;">
+  <div class="section-label">// 03 &nbsp; Structural Architecture</div>
+  <div class="arch-heading">HOW THE<br>SYSTEM<br>COMPOUNDS.</div>
+  <div class="arch-grid">
+    <div class="arch-col">
+      <div class="arch-layer">Layer 01 / Capital</div>
+      <div class="arch-col-title">Deployment Engine</div>
+      <div class="arch-col-body">Shrinex Group acts as the orchestrating capital layer — allocating venture capital and private equity to subsidiaries based on strategic fit, market timing, and compounding potential. No spray-and-pray. Every dollar is a calculated position.</div>
+      <ul class="arch-list">
+        <li>VC / PE allocation framework</li>
+        <li>Cross-subsidiary capital recycling</li>
+        <li>Long-duration position sizing</li>
+        <li>Asymmetric return targeting</li>
+      </ul>
+    </div>
+    <div class="arch-sep"></div>
+    <div class="arch-col">
+      <div class="arch-layer">Layer 02 / Intelligence</div>
+      <div class="arch-col-title">Cognitive Mesh</div>
+      <div class="arch-col-body">Each subsidiary generates data, market signals, and operational learnings that feed a group-level intelligence layer. Strategy is not formulated in isolation — it emerges from the compounding signal across the entire network.</div>
+      <ul class="arch-list">
+        <li>Cross-domain signal aggregation</li>
+        <li>Predictive thesis refinement</li>
+        <li>Autonomous market scanning</li>
+        <li>Shared AI infrastructure stack</li>
+      </ul>
+    </div>
+    <div class="arch-sep"></div>
+    <div class="arch-col">
+      <div class="arch-layer">Layer 03 / Selection</div>
+      <div class="arch-col-title">Self-Selection Engine</div>
+      <div class="arch-col-body">The terminal state of the architecture: a system sophisticated enough to identify, evaluate, and initiate its own next ventures — with minimal human intervention. Capital and intelligence converge until the structure begins choosing its own outcomes.</div>
+      <ul class="arch-list">
+        <li>Autonomous venture identification</li>
+        <li>AI-driven due diligence</li>
+        <li>System-level portfolio rebalancing</li>
+        <li>Long-horizon outcome optimization</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" style="max-width:1200px;">
+  <div class="section-label">// 04 &nbsp; Civilizational Horizon</div>
+  <div class="timeline-heading">THE 700-YEAR<br>ARCHITECTURE.</div>
+  <div class="timeline-track">
+    <div class="t-item">
+      <div class="t-era"><strong>2020s – 2030s</strong>PHASE I<br>Foundation</div>
+      <div class="t-content">
+        <div class="t-content-title">Build the Core. Prove the Model.</div>
+        <div class="t-content-body">Establish AI automation and healthcare subsidiaries as cash-generating anchors. Build the group's capital base through operational excellence. Develop the shared intelligence infrastructure that will govern all future ventures. Prove that a holding system at 21 can outperform operators twice the age.</div>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-era"><strong>2030s – 2050s</strong>PHASE II<br>Expansion</div>
+      <div class="t-content">
+        <div class="t-content-title">Robotics, Biotech, Climate Infrastructure.</div>
+        <div class="t-content-body">Enter physical AI and autonomous robotics. Begin bioengineering and human augmentation positioning. Deploy climate resilience infrastructure as the market transitions from optional to critical. The group's capital base funds entry into sectors that require decade-long runway.</div>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-era"><strong>2050s – 2100s</strong>PHASE III<br>Dominance</div>
+      <div class="t-content">
+        <div class="t-content-title">The System Reaches Escape Velocity.</div>
+        <div class="t-content-body">Compound returns from Phase I and II fund entry into neural interfaces, space infrastructure, and sovereign-scale energy systems. The group's intelligence architecture begins operating with significant autonomy. Human oversight transitions from operational to directional.</div>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-era"><strong>2100 – 2700+</strong>PHASE IV<br>Perpetuity</div>
+      <div class="t-content">
+        <div class="t-content-title">The Architecture Selects Its Own Outcomes.</div>
+        <div class="t-content-body">Shrinex Group operates as civilizational infrastructure — a self-reinforcing system of capital, intelligence, and physical capability that persists across political cycles, technological shifts, and generational transitions. This is not a company. It is a designed permanence.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<div class="manifesto-section">
+  <div class="manifesto-inner">
+    <div class="section-label" style="justify-content:center; text-align:center;">// 05 &nbsp; Why We Exist</div>
+    <div class="manifesto-quote">
+      "EVERY CIVILIZATION THAT ENDURED<br>
+      WAS BUILT BY SOMEONE WHO REFUSED<br>
+      TO THINK IN QUARTERS."
+    </div>
+    <div class="manifesto-body">
+      We exist because the problems worth solving require patience that markets cannot price,<br>
+      capital that institutions cannot commit, and ambition that comfort cannot produce.<br><br>
+      Shrinex Group is the answer to a simple question:<br>
+      <em style="color:white; font-style:normal;">What does it look like when someone builds for everyone, not just now?</em>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact" style="max-width:1200px;">
+  <div class="section-label">// 06 &nbsp; Enter the Network</div>
+  <div class="contact-section">
+    <div class="contact-left">
+      <div class="contact-heading">BUILD WITH<br>US.</div>
+      <div class="contact-sub">We engage with founders, operators, institutional capital, and domain experts who think in decades. If you are building something that matters at scale, this is where to begin.</div>
+    </div>
+    <div class="contact-right">
+      <div class="contact-item">
+        <span class="ci-label">Headquarters</span>
+        <span class="ci-value">India</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">LinkedIn</span>
+        <span class="ci-value">Shrinex Group</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Founder</span>
+        <span class="ci-value">Aaditya Dubey</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Status</span>
+        <span class="ci-value">Operational &nbsp;·&nbsp; Expanding</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SHRINEX GROUP</div>
+  <div class="footer-copy">© 2020s – 2700+ &nbsp;·&nbsp; ALL SYSTEMS OPERATIONAL</div>
+  <div class="footer-right">THE ARCHITECTURE SELECTS ITS OWN OUTCOMES.</div>
+</footer>
+
+<script>
+  const dot = document.getElementById('dot');
+  const ring = document.getElementById('ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) *.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Intersection observer for reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.vertical-cell, .stat-item, .t-item, .arch-col').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
